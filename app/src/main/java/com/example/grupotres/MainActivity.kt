@@ -1,6 +1,8 @@
 package com.example.grupotres
 
 import android.os.Bundle
+import android.view.animation.AnimationUtils
+import android.widget.Button
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -16,5 +18,9 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
+        val btnSpin = findViewById<Button>(R.id.btn_spin)
+        val blinkAnimation = AnimationUtils.loadAnimation(this, R.anim.blink)
+        btnSpin.startAnimation(blinkAnimation)
     }
 }
