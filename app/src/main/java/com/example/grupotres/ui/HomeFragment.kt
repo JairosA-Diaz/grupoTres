@@ -12,6 +12,7 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.example.grupotres.R
 import kotlin.random.Random
 
@@ -39,6 +40,11 @@ class HomeFragment : Fragment() {
 
         btnSpin.setOnClickListener {
             spinBottle(ivBottle, btnSpin, tvCountdown)
+        }
+
+        // Clic en el icono de Instrucciones
+        view.findViewById<ImageView>(R.id.iv_rules).setOnClickListener {
+            findNavController().navigate(R.id.action_homeFragment_to_instructionsFragment)
         }
     }
 
