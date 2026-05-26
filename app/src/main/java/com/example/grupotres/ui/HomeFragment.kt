@@ -3,7 +3,6 @@ package com.example.grupotres.ui
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.os.CountDownTimer
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,13 +13,21 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.grupotres.R
-import kotlin.random.Random
+import com.example.grupotres.data.AppDatabase
+import com.example.grupotres.repository.ChallengeRepository
 
 class HomeFragment : Fragment() {
 
-    private var lastAngle = 0f
+    private val viewModel: HomeViewModel by viewModels {
+        val database = AppDatabase.getDatabase(requireContext())
+        val repository = ChallengeRepository(database.challengeDao())
+        HomeViewModelFactory(repository)
+    }
+
+    private var currentAngle = 0f
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -41,7 +48,7 @@ class HomeFragment : Fragment() {
         btnSpin.startAnimation(blinkAnimation)
 
         btnSpin.setOnClickListener {
-            spinBottle(ivBottle, btnSpin, tvCountdown)
+            viewModel.spinBottle()
         }
 
         // Clic en el icono de Instrucciones
@@ -55,55 +62,39 @@ class HomeFragment : Fragment() {
             intent.data = Uri.parse("https://play.google.com/store/apps/details?id=com.nequi.MobileApp&hl=es_419&gl=es")
             startActivity(intent)
         }
-    }
 
-    private fun spinBottle(ivBottle: ImageView, btnSpin: Button, tvCountdown: TextView) {
-        // Desaparecer botón momentáneamente
-        btnSpin.visibility = View.GONE
-        btnSpin.clearAnimation()
+        // Observamos el ángulo de rotación
+        viewModel.rotationAngle.observe(viewLifecycleOwner) { targetAngle ->
+            val rotate = RotateAnimation(
+                currentAngle, targetAngle,
+                Animation.RELATIVE_TO_SELF, 0.5f,
+                Animation.RELATIVE_TO_SELF, 0.5f
+            )
+            rotate.duration = 3000
+            rotate.fillAfter = true
+            ivBottle.startAnimation(rotate)
+            currentAngle = targetAngle % 360f
+        }
 
-        // Giro aleatorio (HU 11)
-        val newAngle = Random.nextInt(3600) + 360f
-        
-        val rotate = RotateAnimation(
-            lastAngle, lastAngle + newAngle,
-            Animation.RELATIVE_TO_SELF, 0.5f,
-            Animation.RELATIVE_TO_SELF, 0.5f
-        )
-
-        lastAngle = (lastAngle + newAngle) % 360f
-        rotate.duration = 3000
-        rotate.fillAfter = true
-
-        rotate.setAnimationListener(object : Animation.AnimationListener {
-            override fun onAnimationStart(animation: Animation?) {}
-            override fun onAnimationEnd(animation: Animation?) {
-                startCountdown(tvCountdown, btnSpin)
-            }
-            override fun onAnimationRepeat(animation: Animation?) {}
-        })
-
-        ivBottle.startAnimation(rotate)
-    }
-
-    private fun startCountdown(tvCountdown: TextView, btnSpin: Button) {
-        tvCountdown.visibility = View.VISIBLE
-        
-        object : CountDownTimer(4000, 1000) {
-            override fun onTick(millisUntilFinished: Long) {
-                val secondsRemaining = (millisUntilFinished / 1000).toInt()
-                tvCountdown.text = secondsRemaining.toString()
-            }
-
-            override fun onFinish() {
-                tvCountdown.visibility = View.GONE
-                // Reaparecer botón con animación
+        // Observamos el estado de giro para ocultar/mostrar el botón
+        viewModel.isSpinning.observe(viewLifecycleOwner) { isSpinning ->
+            if (isSpinning) {
+                btnSpin.visibility = View.GONE
+                btnSpin.clearAnimation()
+            } else {
                 btnSpin.visibility = View.VISIBLE
-                val blinkAnimation = AnimationUtils.loadAnimation(requireContext(), R.anim.blink)
                 btnSpin.startAnimation(blinkAnimation)
-                
-                // Aquí se lanzará el diálogo del reto aleatorio (HU 12)
             }
-        }.start()
+        }
+
+        // Observamos el valor del contador
+        viewModel.countdownValue.observe(viewLifecycleOwner) { count ->
+            if (count != null) {
+                tvCountdown.visibility = View.VISIBLE
+                tvCountdown.text = count.toString()
+            } else {
+                tvCountdown.visibility = View.GONE
+            }
+        }
     }
 }
