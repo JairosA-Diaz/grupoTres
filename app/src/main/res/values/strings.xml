@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">grupoTres</string>
     <string name="splash_title">pico botella</string>
+    <string name="bottle_desc">Botella del juego</string>
 </resources>
