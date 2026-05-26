@@ -3,4 +3,9 @@
     <string name="splash_title">pico botella</string>
     <string name="bottle_desc">Botella del juego</string>
     <string name="btn_press_me">Presióname</string>
+    <string name="desc_rate">Calificar</string>
+    <string name="desc_sound">Sonido</string>
+    <string name="desc_rules">Instrucciones</string>
+    <string name="desc_challenges">Retos</string>
+    <string name="desc_share">Compartir</string>
 </resources>
