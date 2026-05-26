@@ -1,4 +1,4 @@
-package com.example.grupotres
+package com.example.grupotres.ui
 
 import android.app.Activity
 import android.content.Intent
@@ -7,6 +7,7 @@ import android.os.Handler
 import android.os.Looper
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
+import com.example.grupotres.R
 
 class SplashActivity : Activity() {
 
