@@ -41,6 +41,19 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.core.ktx)
     implementation(libs.material)
+
+    // Navigation
+    implementation(libs.androidx.navigation.fragment.ktx)
+    implementation(libs.androidx.navigation.ui.ktx)
+
+    // Room
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    // Usaremos kapt por ahora para el compilador de Room
+    // Nota: Deberías agregar el plugin kotlin-kapt arriba
+    // annotationProcessor(libs.androidx.room.compiler) // Para Java
+    // kapt(libs.androidx.room.compiler) // Para Kotlin
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.junit)
