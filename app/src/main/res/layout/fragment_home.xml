@@ -4,8 +4,63 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#4E342E"
+    android:background="@color/wood_brown"
     tools:context=".ui.HomeFragment">
+
+    <LinearLayout
+        android:id="@+id/toolbar_home"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:layout_margin="16dp"
+        android:background="@drawable/toolbar_background"
+        android:orientation="horizontal"
+        android:padding="8dp"
+        android:gravity="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:src="@android:drawable/btn_star_big_on"
+            app:tint="@color/orange_main"
+            android:contentDescription="@string/desc_rate" />
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:src="@android:drawable/ic_lock_silent_mode_off"
+            app:tint="@color/orange_main"
+            android:contentDescription="@string/desc_sound" />
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:src="@android:drawable/ic_menu_help"
+            app:tint="@color/orange_main"
+            android:contentDescription="@string/desc_rules" />
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:src="@android:drawable/ic_menu_add"
+            app:tint="@color/orange_main"
+            android:contentDescription="@string/desc_challenges" />
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:src="@android:drawable/ic_menu_share"
+            app:tint="@color/orange_main"
+            android:contentDescription="@string/desc_share" />
+
+    </LinearLayout>
 
     <ImageView
         android:id="@+id/iv_bottle_home"
@@ -16,13 +71,13 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:contentDescription="Botella" />
+        android:contentDescription="@string/desc_bottle" />
 
     <TextView
         android:id="@+id/tv_countdown_home"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="#FF5722"
+        android:textColor="@color/orange_main"
         android:textSize="60sp"
         android:textStyle="bold"
         android:visibility="gone"
@@ -38,8 +93,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="32dp"
-        android:backgroundTint="#FF5722"
-        android:text="Presióname"
+        android:backgroundTint="@color/orange_main"
+        android:text="@string/btn_press_me"
         android:textColor="@android:color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
