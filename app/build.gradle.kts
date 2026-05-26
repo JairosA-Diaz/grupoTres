@@ -49,6 +49,8 @@ dependencies {
     // Room
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
+    implementation(libs.navigation.fragment.ktx)
+    implementation(libs.navigation.ui.ktx)
     // Usaremos kapt por ahora para el compilador de Room
     // Nota: Deberías agregar el plugin kotlin-kapt arriba
     // annotationProcessor(libs.androidx.room.compiler) // Para Java
