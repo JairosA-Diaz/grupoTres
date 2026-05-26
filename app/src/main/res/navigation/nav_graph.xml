@@ -9,5 +9,15 @@
         android:id="@+id/homeFragment"
         android:name="com.example.grupotres.ui.HomeFragment"
         android:label="Home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home">
+        <action
+            android:id="@+id/action_homeFragment_to_instructionsFragment"
+            app:destination="@id/instructionsFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/instructionsFragment"
+        android:name="com.example.grupotres.ui.InstructionsFragment"
+        android:label="Instrucciones"
+        tools:layout="@layout/fragment_instructions" />
 </navigation>
