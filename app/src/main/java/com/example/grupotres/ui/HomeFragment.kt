@@ -1,5 +1,7 @@
 package com.example.grupotres.ui
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.LayoutInflater
@@ -45,6 +47,13 @@ class HomeFragment : Fragment() {
         // Clic en el icono de Instrucciones
         view.findViewById<ImageView>(R.id.iv_rules).setOnClickListener {
             findNavController().navigate(R.id.action_homeFragment_to_instructionsFragment)
+        }
+
+        // Clic en el icono de Calificar (HU 4.0)
+        view.findViewById<ImageView>(R.id.iv_rate).setOnClickListener {
+            val intent = Intent(Intent.ACTION_VIEW)
+            intent.data = Uri.parse("https://play.google.com/store/apps/details?id=com.nequi.MobileApp&hl=es_419&gl=es")
+            startActivity(intent)
         }
     }
 
