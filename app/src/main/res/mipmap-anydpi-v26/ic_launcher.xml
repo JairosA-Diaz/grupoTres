@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Declaración inicial del archivo XML -->
+
 <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Define el ícono adaptable principal -->
+
     <background android:drawable="@drawable/ic_launcher_background" />
+    <!-- Usa el fondo morado -->
+
     <foreground android:drawable="@drawable/ic_launcher_foreground" />
+    <!-- Usa la botella reducida y centrada -->
+
     <monochrome android:drawable="@drawable/ic_launcher_foreground" />
+    <!-- Usa la misma botella para modo monocromático -->
+
 </adaptive-icon>
