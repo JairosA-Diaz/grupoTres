@@ -195,14 +195,24 @@ class HomeFragment : Fragment() {
                 btnSpin.clearAnimation()
                 // Detiene la animación parpadeante del botón
 
+                // Criterio 8 de HU 11: Pausar música mientras gira
+                if (isSoundOn) {
+                    mediaPlayer?.pause()
+                }
+
             } else {
-                // Si la botella ya dejó de girar
+                // Si la botella ya dejó de girar (partida terminada o inicial)
 
                 btnSpin.visibility = View.VISIBLE
                 // Muestra nuevamente el botón
 
                 btnSpin.startAnimation(blinkAnimation)
                 // Vuelve a aplicar la animación parpadeante
+
+                // Reanudar música al terminar (si estaba encendida)
+                if (isSoundOn) {
+                    mediaPlayer?.start()
+                }
             }
         }
 
