@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Declaración inicial del archivo XML. Siempre debe ir en la primera línea -->
+
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- layer-list permite crear un fondo usando una o varias capas -->
+
+    <item>
+        <!-- item representa una capa visual del fondo -->
+
+        <shape android:shape="rectangle">
+            <!-- shape crea una figura; en este caso un rectángulo que ocupa la pantalla -->
+
+            <gradient
+                android:startColor="#BCA082"
+                android:centerColor="#8F7255"
+                android:endColor="#D1B899"
+                android:angle="90" />
+            <!-- gradient crea un degradado vertical con tonos parecidos a piso de madera -->
+
+        </shape>
+        <!-- Cierra la figura rectangular -->
+
+    </item>
+    <!-- Cierra la capa del fondo -->
+
+</layer-list>
+    <!-- Cierra el fondo por capas -->

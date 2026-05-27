@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Declaración inicial del archivo XML. Debe ir siempre en la primera línea -->
+
+<alpha xmlns:android="http://schemas.android.com/apk/res/android"
+    android:fromAlpha="1.0"
+    android:toAlpha="0.3"
+    android:duration="600"
+    android:repeatCount="infinite"
+    android:repeatMode="reverse" />
+    <!-- alpha permite crear una animación de transparencia -->
+    <!-- fromAlpha="1.0" indica que el botón inicia completamente visible -->
+    <!-- toAlpha="0.3" indica que el botón baja su visibilidad al 30% -->
+    <!-- duration="600" indica que cada cambio dura 600 milisegundos -->
+    <!-- repeatCount="infinite" hace que la animación se repita sin parar -->
+    <!-- repeatMode="reverse" hace que la animación vaya y vuelva suavemente -->

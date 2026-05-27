@@ -1,30 +1,91 @@
+
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:aapt="http://schemas.android.com/aapt"
     android:width="108dp"
     android:height="108dp"
-    android:viewportWidth="108"
-    android:viewportHeight="108">
-    <path android:pathData="M31,63.928c0,0 6.4,-11 12.1,-13.1c7.2,-2.6 26,-1.4 26,-1.4l38.1,38.1L107,108.928l-32,-1L31,63.928z">
-        <aapt:attr name="android:fillColor">
-            <gradient
-                android:endX="85.84757"
-                android:endY="92.4963"
-                android:startX="42.9492"
-                android:startY="49.59793"
-                android:type="linear">
-                <item
-                    android:color="#44000000"
-                    android:offset="0.0" />
-                <item
-                    android:color="#00000000"
-                    android:offset="1.0" />
-            </gradient>
-        </aapt:attr>
-    </path>
+    android:viewportWidth="70"
+    android:viewportHeight="175">
+  <!-- Define un recurso vectorial -->
+  <!-- width y height son el tamaño base del drawable -->
+  <!-- viewportWidth y viewportHeight definen el sistema interno de coordenadas del dibujo -->
+
+  <group
+      android:scaleX="0.27"
+      android:scaleY="0.63"
+      android:translateX="26"
+      android:translateY="31">
+    <!-- group agrupa todas las partes de la botella -->
+    <!-- scaleX aumenta el ancho de toda la botella -->
+    <!-- scaleY aumenta el alto de toda la botella -->
+    <!-- translateX mueve la botella hacia izquierda o derecha -->
+    <!-- translateY mueve la botella hacia arriba o abajo -->
+    <!-- En este caso aumentamos el tamaño y la reubicamos para que siga centrada -->
+
     <path
-        android:fillColor="#FFFFFF"
-        android:fillType="nonZero"
-        android:pathData="M65.3,45.828l3.8,-6.6c0.2,-0.4 0.1,-0.9 -0.3,-1.1c-0.4,-0.2 -0.9,-0.1 -1.1,0.3l-3.9,6.7c-6.3,-2.8 -13.4,-2.8 -19.7,0l-3.9,-6.7c-0.2,-0.4 -0.7,-0.5 -1.1,-0.3C38.8,38.328 38.7,38.828 38.9,39.228l3.8,6.6C36.2,49.428 31.7,56.028 31,63.928h46C76.3,56.028 71.8,49.428 65.3,45.828zM43.4,57.328c-0.8,0 -1.5,-0.5 -1.8,-1.2c-0.3,-0.7 -0.1,-1.5 0.4,-2.1c0.5,-0.5 1.4,-0.7 2.1,-0.4c0.7,0.3 1.2,1 1.2,1.8C45.3,56.528 44.5,57.328 43.4,57.328L43.4,57.328zM64.6,57.328c-0.8,0 -1.5,-0.5 -1.8,-1.2s-0.1,-1.5 0.4,-2.1c0.5,-0.5 1.4,-0.7 2.1,-0.4c0.7,0.3 1.2,1 1.2,1.8C66.5,56.528 65.6,57.328 64.6,57.328L64.6,57.328z"
+        android:pathData="M15,167L55,167C65,167 60,157 60,147L60,87L50,47L50,17L20,17L20,47L10,87L10,147C10,157 5,167 15,167Z"
         android:strokeWidth="1"
-        android:strokeColor="#00000000" />
+        android:strokeColor="#0d3b21">
+      <!-- Dibuja el cuerpo principal de la botella -->
+      <!-- strokeWidth define el grosor del borde -->
+      <!-- strokeColor define el color del borde -->
+
+      <aapt:attr name="android:fillColor">
+        <!-- fillColor se define con un gradiente -->
+
+        <gradient
+            android:startX="8.75"
+            android:startY="17"
+            android:endX="61.25"
+            android:endY="17"
+            android:type="linear">
+          <!-- Gradiente lineal de izquierda a derecha -->
+
+          <item android:offset="0" android:color="#FF145A32"/>
+          <!-- Color inicial del gradiente -->
+
+          <item android:offset="0.5" android:color="#FF2ECC71"/>
+          <!-- Color del centro del gradiente -->
+
+          <item android:offset="1" android:color="#FF1E8449"/>
+          <!-- Color final del gradiente -->
+        </gradient>
+      </aapt:attr>
+    </path>
+
+    <path
+        android:pathData="M20,12L50,12A2,2 0,0 1,52 14L52,18A2,2 0,0 1,50 20L20,20A2,2 0,0 1,18 18L18,14A2,2 0,0 1,20 12z"
+        android:strokeWidth="1"
+        android:fillColor="#2ecc71"
+        android:strokeColor="#0d3b21"/>
+    <!-- Dibuja la tapa o borde superior de la botella -->
+
+    <path
+        android:pathData="M35,122m-18,0a18,18 0,1 1,36 0a18,18 0,1 1,-36 0"
+        android:strokeWidth="1"
+        android:fillColor="#d4af37"
+        android:strokeColor="#997a1d"/>
+    <!-- Dibuja el círculo principal de la etiqueta -->
+
+    <path
+        android:pathData="M35,122m-14,0a14,14 0,1 1,28 0a14,14 0,1 1,-28 0"
+        android:strokeWidth="0.5"
+        android:fillColor="#00000000"
+        android:strokeColor="#997a1d"/>
+    <!-- Dibuja el aro interno de la etiqueta -->
+
+    <path
+        android:pathData="M22,52L23,52A2,2 0,0 1,25 54L25,150A2,2 0,0 1,23 152L22,152A2,2 0,0 1,20 150L20,54A2,2 0,0 1,22 52z"
+        android:strokeAlpha="0.3"
+        android:fillColor="#ffffff"
+        android:fillAlpha="0.3"/>
+    <!-- Dibuja un brillo vertical en la botella -->
+    <!-- strokeAlpha y fillAlpha controlan la transparencia -->
+
+    <path
+        android:pathData="M46,52L47,52A1,1 0,0 1,48 53L48,111A1,1 0,0 1,47 112L46,112A1,1 0,0 1,45 111L45,53A1,1 0,0 1,46 52z"
+        android:strokeAlpha="0.2"
+        android:fillColor="#ffffff"
+        android:fillAlpha="0.2"/>
+    <!-- Dibuja un segundo brillo más delgado -->
+  </group>
 </vector>

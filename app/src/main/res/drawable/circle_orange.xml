@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Declaración inicial del archivo XML -->
+
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <!-- shape con oval crea una forma circular u ovalada -->
+
+    <solid android:color="#FF5722" />
+    <!-- solid define el color naranja del círculo -->
+
+</shape>
+    <!-- Cierra la figura circular -->

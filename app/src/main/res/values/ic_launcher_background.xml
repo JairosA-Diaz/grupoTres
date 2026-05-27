@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Agrupa los recursos de Android definidos para la aplicación -->
+
+    <color name="ic_launcher_background">#9025A2</color>
+    <!-- Define el color morado del fondo del ícono launcher de la app -->
+</resources>

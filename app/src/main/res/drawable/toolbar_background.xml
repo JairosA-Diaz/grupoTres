@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Declaración inicial del archivo XML -->
+
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- shape permite crear una figura personalizada -->
+
+    <solid android:color="#CC000000" />
+    <!-- solid define el color de fondo; aquí es negro con transparencia -->
+
+    <corners android:radius="18dp" />
+    <!-- corners redondea las esquinas de la figura -->
+
+    <padding
+        android:left="10dp"
+        android:top="6dp"
+        android:right="10dp"
+        android:bottom="6dp" />
+    <!-- padding agrega espacio interno dentro de la toolbar -->
+
+</shape>
+    <!-- Cierra la figura personalizada -->

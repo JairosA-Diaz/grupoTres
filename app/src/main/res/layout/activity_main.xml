@@ -1,19 +1,153 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Declaración inicial del archivo XML. Debe ir siempre en la primera línea -->
+
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/wood_background"
     tools:context=".MainActivity">
+    <!-- ConstraintLayout permite ubicar elementos en la pantalla mediante restricciones -->
+    <!-- android:id="@+id/main" se conserva para no afectar el código existente -->
+    <!-- android:background aplica el fondo tipo madera creado en drawable -->
+    <!-- tools:context indica que este layout pertenece a MainActivity -->
 
-    <TextView
+    <LinearLayout
+        android:id="@+id/customToolbar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:background="@drawable/toolbar_background"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="8dp"
+        android:layout_marginTop="24dp"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent">
+        <!-- Toolbar personalizada ubicada en la parte superior -->
+        <!-- Tiene fondo negro redondeado -->
+        <!-- Organiza los íconos horizontalmente -->
+
+        <TextView
+            android:id="@+id/iconRate"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:gravity="center"
+            android:text="★"
+            android:textColor="#FF5722"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+        <!-- Ícono de estrella para calificar la aplicación -->
+
+        <TextView
+            android:id="@+id/iconSound"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:gravity="center"
+            android:text="♫"
+            android:textColor="#FF5722"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+        <!-- Ícono de sonido para representar el audio de fondo -->
+
+        <TextView
+            android:id="@+id/iconInstructions"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:gravity="center"
+            android:text="?"
+            android:textColor="#FF5722"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+        <!-- Ícono para acceder a las instrucciones del juego -->
+
+        <TextView
+            android:id="@+id/iconChallenges"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:gravity="center"
+            android:text="+"
+            android:textColor="#FF5722"
+            android:textSize="26sp"
+            android:textStyle="bold" />
+        <!-- Ícono para agregar o listar retos -->
+
+        <TextView
+            android:id="@+id/iconShare"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:gravity="center"
+            android:text="↗"
+            android:textColor="#FF5722"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+        <!-- Ícono para compartir la aplicación -->
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/bottleContainer"
+        android:layout_width="260dp"
+        android:layout_height="360dp"
+        android:layout_marginTop="40dp"
+        app:layout_constraintTop_toBottomOf="@id/customToolbar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+        <!-- FrameLayout permite poner elementos encima de otros -->
+        <!-- Aquí se ubica la botella y encima el contador -->
+
+        <ImageView
+            android:id="@+id/imgHomeBottle"
+            android:layout_width="220dp"
+            android:layout_height="320dp"
+            android:layout_gravity="center"
+            android:rotation="-35"
+            android:src="@drawable/ic_bottle"
+            android:contentDescription="Botella del juego" />
+        <!-- Imagen principal de la botella -->
+        <!-- android:rotation inclina la botella para parecerse al diseño de referencia -->
+
+        <TextView
+            android:id="@+id/txtCounter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="3"
+            android:textColor="#FF5722"
+            android:textSize="32sp"
+            android:textStyle="bold" />
+        <!-- Contador regresivo ubicado sobre el centro de la botella -->
+
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/btnPress"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/circle_orange"
+        android:gravity="center"
+        android:text=""
+        app:layout_constraintTop_toBottomOf="@id/bottleContainer"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+    <!-- Botón circular naranja que después tendrá animación parpadeante -->
+
+    <TextView
+        android:id="@+id/txtPress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Presióname"
+        android:textColor="#000000"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/btnPress"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+    <!-- Texto visible debajo del botón circular -->
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+    <!-- Cierre del contenedor principal de la pantalla Home -->
