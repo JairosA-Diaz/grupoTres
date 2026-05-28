@@ -20,6 +20,9 @@ class HomeViewModel(private val repository: ChallengeRepository) : ViewModel() {
     private val _isSpinning = MutableLiveData<Boolean>(false)
     val isSpinning: LiveData<Boolean> = _isSpinning
 
+    private val _currentChallenge = MutableLiveData<String?>()
+    val currentChallenge: LiveData<String?> = _currentChallenge
+
     private var lastAngle = 0f
 
     fun spinBottle() {
@@ -28,6 +31,7 @@ class HomeViewModel(private val repository: ChallengeRepository) : ViewModel() {
         viewModelScope.launch {
             _isSpinning.value = true
             _countdownValue.value = null
+            _currentChallenge.value = null
 
             val newAngle = Random.nextInt(3600) + 360f
             val totalRotation = lastAngle + newAngle
@@ -35,20 +39,22 @@ class HomeViewModel(private val repository: ChallengeRepository) : ViewModel() {
             _rotationAngle.value = totalRotation
             lastAngle = totalRotation % 360f
 
-            // Simulamos el tiempo de la animación de giro (3 segundos)
             delay(3000)
 
-            // Iniciar cuenta regresiva
             for (i in 3 downTo 0) {
                 _countdownValue.value = i
                 delay(1000)
             }
 
             _countdownValue.value = null
-            _isSpinning.value = false
             
-            // Aquí en el futuro pediremos un reto al repository
-            // val challenge = repository.getRandomChallenge()
+            val randomChallenge = repository.getRandomChallenge()
+            _currentChallenge.value = randomChallenge?.description ?: "¡Baila por 30 segundos!"
         }
+    }
+
+    fun onDialogClosed() {
+        _isSpinning.value = false
+        _currentChallenge.value = null
     }
 }

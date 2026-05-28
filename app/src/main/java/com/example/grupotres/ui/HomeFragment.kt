@@ -40,6 +40,9 @@ import android.widget.ImageView
 import android.widget.TextView
 // Permite manipular textos desde Kotlin
 
+import androidx.appcompat.app.AlertDialog
+// Permite crear cuadros de diálogo personalizados
+
 import androidx.fragment.app.Fragment
 // Permite crear un Fragment, que es una parte reutilizable de una pantalla
 
@@ -235,6 +238,32 @@ class HomeFragment : Fragment() {
                 // Oculta el contador
             }
         }
+
+        viewModel.currentChallenge.observe(viewLifecycleOwner) { challenge ->
+            if (challenge != null) {
+                showChallengeDialog(challenge)
+            }
+        }
+    }
+
+    private fun showChallengeDialog(challengeText: String) {
+        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_challenge, null)
+        val tvChallenge = dialogView.findViewById<TextView>(R.id.tv_challenge_text)
+        val btnClose = dialogView.findViewById<Button>(R.id.btn_close_dialog)
+
+        tvChallenge.text = challengeText
+
+        val dialog = AlertDialog.Builder(requireContext(), R.style.CustomDialogTheme)
+            .setView(dialogView)
+            .setCancelable(false)
+            .create()
+
+        btnClose.setOnClickListener {
+            dialog.dismiss()
+            viewModel.onDialogClosed()
+        }
+
+        dialog.show()
     }
 
     private fun startBackgroundSound(ivSound: ImageView) {
@@ -246,6 +275,9 @@ class HomeFragment : Fragment() {
 
         mediaPlayer?.isLooping = true
         // Hace que el sonido se repita continuamente
+
+        mediaPlayer?.setVolume(1.0f, 1.0f)
+        // Establece el volumen al máximo nivel permitido para este flujo de audio
 
         mediaPlayer?.start()
         // Inicia la reproducción del sonido de fondo
