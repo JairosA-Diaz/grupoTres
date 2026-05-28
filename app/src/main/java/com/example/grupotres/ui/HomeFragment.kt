@@ -276,6 +276,9 @@ class HomeFragment : Fragment() {
         mediaPlayer?.isLooping = true
         // Hace que el sonido se repita continuamente
 
+        mediaPlayer?.setVolume(1.0f, 1.0f)
+        // Establece el volumen al máximo nivel permitido para este flujo de audio
+
         mediaPlayer?.start()
         // Inicia la reproducción del sonido de fondo
 
