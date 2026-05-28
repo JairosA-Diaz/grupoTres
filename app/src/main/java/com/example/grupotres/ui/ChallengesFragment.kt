@@ -5,6 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.EditText
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -12,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.grupotres.R
 import com.example.grupotres.data.AppDatabase
+import com.example.grupotres.data.Challenge
 import com.example.grupotres.repository.ChallengeRepository
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
@@ -42,7 +45,7 @@ class ChallengesFragment : Fragment() {
         viewModel.allChallenges.observe(viewLifecycleOwner) { challenges ->
             rvChallenges.adapter = ChallengeAdapter(
                 challenges,
-                onEdit = { /* HU 8.0 */ },
+                onEdit = { challenge -> showEditChallengeDialog(challenge) },
                 onDelete = { challenge -> viewModel.deleteChallenge(challenge) }
             )
         }
@@ -52,7 +55,41 @@ class ChallengesFragment : Fragment() {
         }
 
         fabAdd.setOnClickListener {
-            // HU 7.0: Abrir diálogo para agregar
+            showAddChallengeDialog()
         }
+    }
+
+    private fun showAddChallengeDialog() {
+        val editText = EditText(requireContext())
+        editText.hint = "Escribe el reto aquí"
+        
+        AlertDialog.Builder(requireContext())
+            .setTitle("Agregar Reto")
+            .setView(editText)
+            .setPositiveButton("Agregar") { _, _ ->
+                val description = editText.text.toString()
+                if (description.isNotBlank()) {
+                    viewModel.addChallenge(description)
+                }
+            }
+            .setNegativeButton("Cancelar", null)
+            .show()
+    }
+
+    private fun showEditChallengeDialog(challenge: Challenge) {
+        val editText = EditText(requireContext())
+        editText.setText(challenge.description)
+        
+        AlertDialog.Builder(requireContext())
+            .setTitle("Editar Reto")
+            .setView(editText)
+            .setPositiveButton("Guardar") { _, _ ->
+                val description = editText.text.toString()
+                if (description.isNotBlank()) {
+                    viewModel.updateChallenge(challenge.copy(description = description))
+                }
+            }
+            .setNegativeButton("Cancelar", null)
+            .show()
     }
 }

@@ -37,4 +37,11 @@ class ChallengesViewModel(private val repository: ChallengeRepository) : ViewMod
             loadChallenges()
         }
     }
+
+    fun updateChallenge(challenge: Challenge) {
+        viewModelScope.launch {
+            repository.updateChallenge(challenge)
+            loadChallenges()
+        }
+    }
 }
