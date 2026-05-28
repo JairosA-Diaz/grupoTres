@@ -164,6 +164,14 @@ class HomeFragment : Fragment() {
             findNavController().navigate(R.id.action_homeFragment_to_challengesFragment)
         }
 
+        // Clic en el icono de Compartir (HU 10.0)
+        view.findViewById<ImageView>(R.id.iv_share).setOnClickListener {
+            val shareIntent = Intent(Intent.ACTION_SEND)
+            shareIntent.type = "text/plain"
+            shareIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.share_message))
+            startActivity(Intent.createChooser(shareIntent, "Compartir usando:"))
+        }
+
         viewModel.rotationAngle.observe(viewLifecycleOwner) { targetAngle ->
             // Observa el ángulo generado por el ViewModel para girar la botella
 
