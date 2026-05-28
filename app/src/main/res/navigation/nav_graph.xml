@@ -13,6 +13,9 @@
         <action
             android:id="@+id/action_homeFragment_to_instructionsFragment"
             app:destination="@id/instructionsFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_challengesFragment"
+            app:destination="@id/challengesFragment" />
     </fragment>
 
     <fragment
@@ -20,4 +23,10 @@
         android:name="com.example.grupotres.ui.InstructionsFragment"
         android:label="Instrucciones"
         tools:layout="@layout/fragment_instructions" />
+
+    <fragment
+        android:id="@+id/challengesFragment"
+        android:name="com.example.grupotres.ui.ChallengesFragment"
+        android:label="Retos"
+        tools:layout="@layout/fragment_challenges" />
 </navigation>
