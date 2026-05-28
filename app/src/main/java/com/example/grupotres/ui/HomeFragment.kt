@@ -159,6 +159,11 @@ class HomeFragment : Fragment() {
             // Ejecuta el Intent y abre el enlace
         }
 
+        view.findViewById<ImageView>(R.id.iv_challenges).setOnClickListener {
+            // Navega desde HomeFragment hacia ChallengesFragment (HU 6.0)
+            findNavController().navigate(R.id.action_homeFragment_to_challengesFragment)
+        }
+
         viewModel.rotationAngle.observe(viewLifecycleOwner) { targetAngle ->
             // Observa el ángulo generado por el ViewModel para girar la botella
 
