@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.EditText
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -46,7 +47,7 @@ class ChallengesFragment : Fragment() {
             rvChallenges.adapter = ChallengeAdapter(
                 challenges,
                 onEdit = { challenge -> showEditChallengeDialog(challenge) },
-                onDelete = { challenge -> viewModel.deleteChallenge(challenge) }
+                onDelete = { challenge -> showDeleteChallengeDialog(challenge) }
             )
         }
 
@@ -91,5 +92,31 @@ class ChallengesFragment : Fragment() {
             }
             .setNegativeButton("Cancelar", null)
             .show()
+    }
+
+    private fun showDeleteChallengeDialog(challenge: Challenge) {
+        val builder = AlertDialog.Builder(requireContext())
+        val view = layoutInflater.inflate(R.layout.dialog_delete_challenge, null)
+        builder.setView(view)
+        builder.setCancelable(false)
+
+        val dialog = builder.create()
+
+        val tvDescription = view.findViewById<TextView>(R.id.tv_delete_description)
+        val btnNo = view.findViewById<TextView>(R.id.btn_no)
+        val btnSi = view.findViewById<TextView>(R.id.btn_si)
+
+        tvDescription.text = challenge.description
+
+        btnNo.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        btnSi.setOnClickListener {
+            viewModel.deleteChallenge(challenge)
+            dialog.dismiss()
+        }
+
+        dialog.show()
     }
 }
