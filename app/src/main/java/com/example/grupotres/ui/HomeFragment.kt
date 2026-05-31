@@ -49,6 +49,11 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 // Permite conectar el Fragment con su ViewModel
 
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+
 import androidx.navigation.fragment.findNavController
 // Permite navegar entre fragments usando Navigation Component
 
@@ -260,23 +265,87 @@ class HomeFragment : Fragment() {
     }
 
     private fun showChallengeDialog(challengeText: String) {
-        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_challenge, null)
+        // Función que muestra el cuadro de diálogo con el reto y el Pokémon aleatorio
+
+        val dialogView = LayoutInflater.from(requireContext())
+            .inflate(R.layout.dialog_challenge, null)
+        // Infla el layout del diálogo desde el XML
+
         val tvChallenge = dialogView.findViewById<TextView>(R.id.tv_challenge_text)
+        // Conecta el texto del reto del XML con Kotlin
+
         val btnClose = dialogView.findViewById<Button>(R.id.btn_close_dialog)
+        // Conecta el botón cerrar del XML con Kotlin
+
+        val ivPokemon = dialogView.findViewById<ImageView>(R.id.iv_pokemon)
+        // Conecta la imagen del Pokémon del XML con Kotlin
 
         tvChallenge.text = challengeText
+        // Coloca el texto del reto en el diálogo
 
         val dialog = AlertDialog.Builder(requireContext(), R.style.CustomDialogTheme)
             .setView(dialogView)
             .setCancelable(false)
+            // Impide que el diálogo se cierre tocando fuera (HU 12 criterio 6)
             .create()
+        // Crea el diálogo personalizado sin permitir cerrarlo tocando fuera
+
+        // Se establece el fondo transparente ANTES de show() para evitar el flash blanco
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
         btnClose.setOnClickListener {
+            // Detecta cuando el usuario toca el botón Cerrar
+
             dialog.dismiss()
+            // Cierra el diálogo
+
             viewModel.onDialogClosed()
+            // Notifica al ViewModel que el diálogo fue cerrado (HU 12 criterio 5)
         }
 
+        // Muestra el diálogo inmediatamente con el reto
         dialog.show()
+
+        lifecycleScope.launch {
+            // Inicia una corrutina ligada al ciclo de vida del Fragment para cargar el Pokémon
+
+            try {
+                val json = withContext(Dispatchers.IO) {
+                    // Descarga el JSON de la PokeAPI en el hilo de fondo
+                    java.net.URL("https://raw.githubusercontent.com/Biuni/PokemonGO-Pokedex/master/pokedex.json")
+                        .readText()
+                }
+
+                val array = org.json.JSONObject(json).getJSONArray("pokemon")
+                // Obtiene la lista de pokémones del JSON
+
+                val randomPokemon = array.getJSONObject((0 until array.length()).random())
+                // Selecciona un Pokémon aleatorio de la lista
+
+                // Se reemplaza http por https para asegurar la carga en versiones modernas de Android
+                val imgUrl = randomPokemon.getString("img").replace("http://", "https://")
+                // Obtiene la URL de la imagen del Pokémon seleccionado
+
+                val bitmap = withContext(Dispatchers.IO) {
+                    // Descarga la imagen del Pokémon en el hilo de fondo
+                    try {
+                        val stream = java.net.URL(imgUrl).openStream()
+                        android.graphics.BitmapFactory.decodeStream(stream)
+                    } catch (e: Exception) {
+                        null
+                    }
+                }
+
+                // Verifica que el Fragment siga activo y el diálogo abierto antes de actualizar la imagen
+                if (isAdded && dialog.isShowing && bitmap != null) {
+                    ivPokemon.setImageBitmap(bitmap)
+                    // Muestra la imagen del Pokémon en el diálogo (HU 12 criterio 2)
+                }
+
+            } catch (e: Exception) {
+                android.util.Log.e("POKEMON_ERROR", "Error al cargar Pokémon: ${e.message}")
+            }
+        }
     }
 
     private fun startBackgroundSound(ivSound: ImageView) {
