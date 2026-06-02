@@ -3,6 +3,8 @@ package com.example.grupotres.ui
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
@@ -30,8 +32,24 @@ class ChallengeAdapter(
         val challenge = challenges[position]
         holder.tvDesc.text = challenge.description
         
-        holder.ivEdit.setOnClickListener { onEdit(challenge) }
-        holder.ivDelete.setOnClickListener { onDelete(challenge) }
+        holder.ivEdit.setOnClickListener { 
+            it.playTouchAnimation { onEdit(challenge) }
+        }
+        holder.ivDelete.setOnClickListener { 
+            it.playTouchAnimation { onDelete(challenge) }
+        }
+    }
+
+    private fun View.playTouchAnimation(action: () -> Unit) {
+        val anim = AnimationUtils.loadAnimation(this.context, R.anim.touch_click)
+        anim.setAnimationListener(object : Animation.AnimationListener {
+            override fun onAnimationStart(animation: Animation?) {}
+            override fun onAnimationRepeat(animation: Animation?) {}
+            override fun onAnimationEnd(animation: Animation?) {
+                action()
+            }
+        })
+        this.startAnimation(anim)
     }
 
     override fun getItemCount(): Int = challenges.size
