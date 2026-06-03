@@ -49,6 +49,11 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 // Permite conectar el Fragment con su ViewModel
 
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+
 import androidx.navigation.fragment.findNavController
 // Permite navegar entre fragments usando Navigation Component
 
@@ -83,9 +88,8 @@ class HomeFragment : Fragment() {
     private var mediaPlayer: MediaPlayer? = null
     // Variable encargada de reproducir el sonido de fondo
 
-    private var isSoundOn = true
-    // Indica si el sonido está encendido o apagado
-    // Inicia en true porque el criterio pide que el sonido esté encendido por defecto
+    private var spinMediaPlayer: MediaPlayer? = null
+    // Variable encargada de reproducir el sonido de la botella girando
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -125,6 +129,18 @@ class HomeFragment : Fragment() {
         startBackgroundSound(ivSound)
         // Inicia automáticamente el sonido de fondo al entrar al Home
 
+        viewModel.isSoundOn.observe(viewLifecycleOwner) { isOn ->
+            updateSoundIcon(ivSound, isOn)
+            if (isOn) {
+                if (mediaPlayer?.isPlaying == false) {
+                    mediaPlayer?.seekTo(0)
+                    mediaPlayer?.start()
+                }
+            } else {
+                mediaPlayer?.pause()
+            }
+        }
+
         btnSpin.setOnClickListener {
             // Detecta cuando el usuario toca el botón Presióname
 
@@ -133,43 +149,48 @@ class HomeFragment : Fragment() {
         }
 
         ivSound.setOnClickListener {
-            // Detecta cuando el usuario toca el ícono de sonido
-
-            toggleSound(ivSound)
-            // Cambia entre sonido encendido y sonido apagado
+            it.playTouchAnimation {
+                // Detecta cuando el usuario toca el ícono de sonido
+                viewModel.toggleSound()
+                // Cambia entre sonido encendido y sonido apagado en el ViewModel
+            }
         }
 
         view.findViewById<ImageView>(R.id.iv_rules).setOnClickListener {
-            // Detecta cuando el usuario toca el ícono de instrucciones
-
-            findNavController().navigate(R.id.action_homeFragment_to_instructionsFragment)
-            // Navega desde HomeFragment hacia InstructionsFragment
+            it.playTouchAnimation {
+                // Detecta cuando el usuario toca el ícono de instrucciones
+                findNavController().navigate(R.id.action_homeFragment_to_instructionsFragment)
+                // Navega desde HomeFragment hacia InstructionsFragment
+            }
         }
 
         view.findViewById<ImageView>(R.id.iv_rate).setOnClickListener {
-            // Detecta cuando el usuario toca el ícono de calificar
-
-            val intent = Intent(Intent.ACTION_VIEW)
-            // Crea un Intent para abrir una página externa
-
-            intent.data = Uri.parse("https://play.google.com/store/apps/details?id=com.nequi.MobileApp&hl=es_419&gl=es")
-            // Define la URL que se abrirá en el navegador o Play Store
-
-            startActivity(intent)
-            // Ejecuta el Intent y abre el enlace
+            it.playTouchAnimation {
+                // Detecta cuando el usuario toca el ícono de calificar
+                val intent = Intent(Intent.ACTION_VIEW)
+                // Crea un Intent para abrir una página externa
+                intent.data = Uri.parse("https://play.google.com/store/apps/details?id=com.nequi.MobileApp&hl=es_419&gl=es")
+                // Define la URL que se abrirá en el navegador o Play Store
+                startActivity(intent)
+                // Ejecuta el Intent y abre el enlace
+            }
         }
 
         view.findViewById<ImageView>(R.id.iv_challenges).setOnClickListener {
-            // Navega desde HomeFragment hacia ChallengesFragment (HU 6.0)
-            findNavController().navigate(R.id.action_homeFragment_to_challengesFragment)
+            it.playTouchAnimation {
+                // Navega desde HomeFragment hacia ChallengesFragment (HU 6.0)
+                findNavController().navigate(R.id.action_homeFragment_to_challengesFragment)
+            }
         }
 
         // Clic en el icono de Compartir (HU 10.0)
         view.findViewById<ImageView>(R.id.iv_share).setOnClickListener {
-            val shareIntent = Intent(Intent.ACTION_SEND)
-            shareIntent.type = "text/plain"
-            shareIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.share_message))
-            startActivity(Intent.createChooser(shareIntent, "Compartir usando:"))
+            it.playTouchAnimation {
+                val shareIntent = Intent(Intent.ACTION_SEND)
+                shareIntent.type = "text/plain"
+                shareIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.share_message))
+                startActivity(Intent.createChooser(shareIntent, "Compartir usando:"))
+            }
         }
 
         viewModel.rotationAngle.observe(viewLifecycleOwner) { targetAngle ->
@@ -200,35 +221,38 @@ class HomeFragment : Fragment() {
         }
 
         viewModel.isSpinning.observe(viewLifecycleOwner) { isSpinning ->
-            // Observa si la botella está girando o no
+            // Observa si el juego está en curso para mostrar/ocultar el botón
 
             if (isSpinning) {
-                // Si la botella está girando
-
                 btnSpin.visibility = View.GONE
-                // Oculta el botón Presióname
-
                 btnSpin.clearAnimation()
-                // Detiene la animación parpadeante del botón
 
                 // Criterio 8 de HU 11: Pausar música mientras gira
-                if (isSoundOn) {
+                if (viewModel.isSoundOn.value == true) {
                     mediaPlayer?.pause()
                 }
-
             } else {
-                // Si la botella ya dejó de girar (partida terminada o inicial)
-
                 btnSpin.visibility = View.VISIBLE
-                // Muestra nuevamente el botón
-
                 btnSpin.startAnimation(blinkAnimation)
-                // Vuelve a aplicar la animación parpadeante
 
                 // Reanudar música al terminar (si estaba encendida)
-                if (isSoundOn) {
+                if (viewModel.isSoundOn.value == true) {
                     mediaPlayer?.start()
                 }
+            }
+        }
+
+        viewModel.isRotating.observe(viewLifecycleOwner) { isRotating ->
+            // Criterio 2: Manejar sonido de giro de forma independiente
+            if (isRotating) {
+                if (spinMediaPlayer == null) {
+                    spinMediaPlayer = MediaPlayer.create(requireContext(), R.raw.botella_girando)
+                    spinMediaPlayer?.isLooping = true
+                }
+                spinMediaPlayer?.start()
+            } else {
+                spinMediaPlayer?.pause()
+                spinMediaPlayer?.seekTo(0)
             }
         }
 
@@ -260,84 +284,130 @@ class HomeFragment : Fragment() {
     }
 
     private fun showChallengeDialog(challengeText: String) {
-        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_challenge, null)
+        // Función que muestra el cuadro de diálogo con el reto y el Pokémon aleatorio
+
+        val dialogView = LayoutInflater.from(requireContext())
+            .inflate(R.layout.dialog_challenge, null)
+        // Infla el layout del diálogo desde el XML
+
         val tvChallenge = dialogView.findViewById<TextView>(R.id.tv_challenge_text)
+        // Conecta el texto del reto del XML con Kotlin
+
         val btnClose = dialogView.findViewById<Button>(R.id.btn_close_dialog)
+        // Conecta el botón cerrar del XML con Kotlin
+
+        val ivPokemon = dialogView.findViewById<ImageView>(R.id.iv_pokemon)
+        // Conecta la imagen del Pokémon del XML con Kotlin
 
         tvChallenge.text = challengeText
+        // Coloca el texto del reto en el diálogo
 
         val dialog = AlertDialog.Builder(requireContext(), R.style.CustomDialogTheme)
             .setView(dialogView)
             .setCancelable(false)
+            // Impide que el diálogo se cierre tocando fuera (HU 12 criterio 6)
             .create()
+        // Crea el diálogo personalizado sin permitir cerrarlo tocando fuera
+
+        // Se establece el fondo transparente ANTES de show() para evitar el flash blanco
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
         btnClose.setOnClickListener {
+            // Detecta cuando el usuario toca el botón Cerrar
+
             dialog.dismiss()
+            // Cierra el diálogo
+
             viewModel.onDialogClosed()
+            // Notifica al ViewModel que el diálogo fue cerrado (HU 12 criterio 5)
         }
 
+        // Muestra el diálogo inmediatamente con el reto
         dialog.show()
+
+        lifecycleScope.launch {
+            // Inicia una corrutina ligada al ciclo de vida del Fragment para cargar el Pokémon
+
+            try {
+                val json = withContext(Dispatchers.IO) {
+                    // Descarga el JSON de la PokeAPI en el hilo de fondo
+                    java.net.URL("https://raw.githubusercontent.com/Biuni/PokemonGO-Pokedex/master/pokedex.json")
+                        .readText()
+                }
+
+                val array = org.json.JSONObject(json).getJSONArray("pokemon")
+                // Obtiene la lista de pokémones del JSON
+
+                val randomPokemon = array.getJSONObject((0 until array.length()).random())
+                // Selecciona un Pokémon aleatorio de la lista
+
+                // Se reemplaza http por https para asegurar la carga en versiones modernas de Android
+                val imgUrl = randomPokemon.getString("img").replace("http://", "https://")
+                // Obtiene la URL de la imagen del Pokémon seleccionado
+
+                val bitmap = withContext(Dispatchers.IO) {
+                    // Descarga la imagen del Pokémon en el hilo de fondo
+                    try {
+                        val stream = java.net.URL(imgUrl).openStream()
+                        android.graphics.BitmapFactory.decodeStream(stream)
+                    } catch (e: Exception) {
+                        null
+                    }
+                }
+
+                // Verifica que el Fragment siga activo y el diálogo abierto antes de actualizar la imagen
+                if (isAdded && dialog.isShowing && bitmap != null) {
+                    ivPokemon.setImageBitmap(bitmap)
+                    // Muestra la imagen del Pokémon en el diálogo (HU 12 criterio 2)
+                }
+
+            } catch (e: Exception) {
+                android.util.Log.e("POKEMON_ERROR", "Error al cargar Pokémon: ${e.message}")
+            }
+        }
     }
 
     private fun startBackgroundSound(ivSound: ImageView) {
         // Función encargada de iniciar el sonido de fondo del juego
 
-        mediaPlayer = MediaPlayer.create(requireContext(), R.raw.sonido_de_fondo)
-        // Crea el reproductor usando el archivo sonido_de_fondo.mp3 ubicado en res/raw
-        // En Kotlin se llama sin escribir la extensión .mp3
+        if (mediaPlayer == null) {
+            mediaPlayer = MediaPlayer.create(requireContext(), R.raw.sonido_de_fondo)
+            mediaPlayer?.isLooping = true
+            mediaPlayer?.setVolume(1.0f, 1.0f)
+        }
 
-        mediaPlayer?.isLooping = true
-        // Hace que el sonido se repita continuamente
+        val isOn = viewModel.isSoundOn.value ?: true
+        if (isOn) {
+            mediaPlayer?.seekTo(0)
+            mediaPlayer?.start()
+        }
+        updateSoundIcon(ivSound, isOn)
+    }
 
-        mediaPlayer?.setVolume(1.0f, 1.0f)
-        // Establece el volumen al máximo nivel permitido para este flujo de audio
+    private fun updateSoundIcon(ivSound: ImageView, isOn: Boolean) {
+        if (isOn) {
+            ivSound.setImageResource(R.drawable.ic_volume_on)
+            ivSound.contentDescription = "Sonido encendido"
+        } else {
+            ivSound.setImageResource(R.drawable.ic_volume_off)
+            ivSound.contentDescription = "Sonido apagado"
+        }
+    }
 
-        mediaPlayer?.start()
-        // Inicia la reproducción del sonido de fondo
-
-        isSoundOn = true
-        // Marca el sonido como encendido
-
-        ivSound.setImageResource(R.drawable.ic_volume_on)
-        // Muestra el ícono de sonido encendido
-
-        ivSound.contentDescription = "Sonido encendido"
-        // Actualiza la descripción del ícono
+    private fun View.playTouchAnimation(action: () -> Unit) {
+        val anim = AnimationUtils.loadAnimation(requireContext(), R.anim.touch_click)
+        anim.setAnimationListener(object : Animation.AnimationListener {
+            override fun onAnimationStart(animation: Animation?) {}
+            override fun onAnimationRepeat(animation: Animation?) {}
+            override fun onAnimationEnd(animation: Animation?) {
+                action()
+            }
+        })
+        this.startAnimation(anim)
     }
 
     private fun toggleSound(ivSound: ImageView) {
-        // Función encargada de encender o apagar el sonido
-
-        if (isSoundOn) {
-            // Si el sonido está encendido
-
-            mediaPlayer?.pause()
-            // Pausa el sonido de fondo
-
-            isSoundOn = false
-            // Cambia el estado del sonido a apagado
-
-            ivSound.setImageResource(R.drawable.ic_volume_off)
-            // Cambia el ícono a sonido apagado
-
-            ivSound.contentDescription = "Sonido apagado"
-            // Actualiza la descripción del ícono
-
-        } else {
-            // Si el sonido está apagado
-
-            mediaPlayer?.start()
-            // Reanuda el sonido de fondo
-
-            isSoundOn = true
-            // Cambia el estado del sonido a encendido
-
-            ivSound.setImageResource(R.drawable.ic_volume_on)
-            // Cambia el ícono a sonido encendido
-
-            ivSound.contentDescription = "Sonido encendido"
-            // Actualiza la descripción del ícono
-        }
+        // Esta función ya no se usa directamente, se usa viewModel.toggleSound()
     }
 
     override fun onPause() {
@@ -348,6 +418,9 @@ class HomeFragment : Fragment() {
 
         mediaPlayer?.pause()
         // Pausa el sonido para que no siga sonando fuera del Home
+
+        spinMediaPlayer?.pause()
+        // Pausa el sonido de giro si el app se va a segundo plano
     }
 
     override fun onResume() {
@@ -356,8 +429,11 @@ class HomeFragment : Fragment() {
         super.onResume()
         // Llama al comportamiento original de reanudación
 
-        if (isSoundOn) {
+        if (viewModel.isSoundOn.value == true) {
             // Si el sonido estaba encendido antes de pausar
+
+            mediaPlayer?.seekTo(0)
+            // Reinicia el sonido desde el principio (Criterio 3)
 
             mediaPlayer?.start()
             // Reanuda el sonido de fondo
@@ -373,7 +449,11 @@ class HomeFragment : Fragment() {
         mediaPlayer?.release()
         // Libera los recursos usados por el reproductor de audio
 
+        spinMediaPlayer?.release()
+        // Libera los recursos usados por el reproductor de giro
+
         mediaPlayer = null
-        // Limpia la referencia del reproductor
+        spinMediaPlayer = null
+        // Limpia las referencias
     }
 }
