@@ -8,6 +8,7 @@ import android.widget.ImageView
 import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -61,37 +62,75 @@ class ChallengesFragment : Fragment() {
     }
 
     private fun showAddChallengeDialog() {
-        val editText = EditText(requireContext())
-        editText.hint = "Escribe el reto aquí"
-        
-        AlertDialog.Builder(requireContext())
-            .setTitle("Agregar Reto")
-            .setView(editText)
-            .setPositiveButton("Agregar") { _, _ ->
-                val description = editText.text.toString()
-                if (description.isNotBlank()) {
-                    viewModel.addChallenge(description)
-                }
-            }
-            .setNegativeButton("Cancelar", null)
-            .show()
+        val dialogView = layoutInflater.inflate(R.layout.dialog_add_challenge, null)
+        val etDescription = dialogView.findViewById<EditText>(R.id.et_challenge_description)
+        val btnCancel = dialogView.findViewById<TextView>(R.id.btn_cancel)
+        val btnSave = dialogView.findViewById<TextView>(R.id.btn_save)
+
+        val dialog = AlertDialog.Builder(requireContext())
+            .setView(dialogView)
+            .setCancelable(false)
+            .create()
+
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+        etDescription.doAfterTextChanged { text ->
+            val isNotBlank = !text.isNullOrBlank()
+            btnSave.isEnabled = isNotBlank
+            btnSave.alpha = if (isNotBlank) 1.0f else 0.5f
+        }
+
+        btnCancel.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        btnSave.setOnClickListener {
+            val description = etDescription.text.toString()
+            viewModel.addChallenge(description)
+            dialog.dismiss()
+        }
+
+        dialog.show()
     }
 
     private fun showEditChallengeDialog(challenge: Challenge) {
-        val editText = EditText(requireContext())
-        editText.setText(challenge.description)
+        val dialogView = layoutInflater.inflate(R.layout.dialog_add_challenge, null)
+        val tvTitle = dialogView.findViewById<TextView>(R.id.tv_dialog_title)
+        val etDescription = dialogView.findViewById<EditText>(R.id.et_challenge_description)
+        val btnCancel = dialogView.findViewById<TextView>(R.id.btn_cancel)
+        val btnSave = dialogView.findViewById<TextView>(R.id.btn_save)
+
+        tvTitle.text = "Editar Reto"
+        etDescription.setText(challenge.description)
         
-        AlertDialog.Builder(requireContext())
-            .setTitle("Editar Reto")
-            .setView(editText)
-            .setPositiveButton("Guardar") { _, _ ->
-                val description = editText.text.toString()
-                if (description.isNotBlank()) {
-                    viewModel.updateChallenge(challenge.copy(description = description))
-                }
-            }
-            .setNegativeButton("Cancelar", null)
-            .show()
+        // Inicializar estado del botón Guardar para edición
+        btnSave.isEnabled = true
+        btnSave.alpha = 1.0f
+
+        val dialog = AlertDialog.Builder(requireContext())
+            .setView(dialogView)
+            .setCancelable(false)
+            .create()
+
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+        etDescription.doAfterTextChanged { text ->
+            val isNotBlank = !text.isNullOrBlank()
+            btnSave.isEnabled = isNotBlank
+            btnSave.alpha = if (isNotBlank) 1.0f else 0.5f
+        }
+
+        btnCancel.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        btnSave.setOnClickListener {
+            val description = etDescription.text.toString()
+            viewModel.updateChallenge(challenge.copy(description = description))
+            dialog.dismiss()
+        }
+
+        dialog.show()
     }
 
     private fun showDeleteChallengeDialog(challenge: Challenge) {
