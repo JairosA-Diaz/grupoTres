@@ -222,10 +222,28 @@ class HomeFragment : Fragment() {
 
         viewModel.isSpinning.observe(viewLifecycleOwner) { isSpinning ->
             // Observa si el juego está en curso para mostrar/ocultar el botón
+            
+            // Referencias a los iconos de la toolbar para desactivarlos durante el juego
+            val ivRules = view.findViewById<ImageView>(R.id.iv_rules)
+            val ivRate = view.findViewById<ImageView>(R.id.iv_rate)
+            val ivChallenges = view.findViewById<ImageView>(R.id.iv_challenges)
+            val ivShare = view.findViewById<ImageView>(R.id.iv_share)
 
             if (isSpinning) {
                 btnSpin.visibility = View.GONE
                 btnSpin.clearAnimation()
+
+                // Desactivar clics en la toolbar (Criterio 7 HU 11: no manipular mientras partida esté en proceso)
+                ivRules.isEnabled = false
+                ivRate.isEnabled = false
+                ivChallenges.isEnabled = false
+                ivShare.isEnabled = false
+                
+                // Efecto visual de desactivado
+                ivRules.alpha = 0.5f
+                ivRate.alpha = 0.5f
+                ivChallenges.alpha = 0.5f
+                ivShare.alpha = 0.5f
 
                 // Criterio 8 de HU 11: Pausar música mientras gira
                 if (viewModel.isSoundOn.value == true) {
@@ -234,6 +252,18 @@ class HomeFragment : Fragment() {
             } else {
                 btnSpin.visibility = View.VISIBLE
                 btnSpin.startAnimation(blinkAnimation)
+
+                // Reactivar iconos de la toolbar al terminar la partida
+                ivRules.isEnabled = true
+                ivRate.isEnabled = true
+                ivChallenges.isEnabled = true
+                ivShare.isEnabled = true
+                
+                // Restaurar opacidad original
+                ivRules.alpha = 1.0f
+                ivRate.alpha = 1.0f
+                ivChallenges.alpha = 1.0f
+                ivShare.alpha = 1.0f
 
                 // Reanudar música al terminar (si estaba encendida)
                 if (viewModel.isSoundOn.value == true) {
