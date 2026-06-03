@@ -24,25 +24,25 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "app_database"
                 )
-                .addCallback(DatabaseCallback())
+                .addCallback(object : RoomDatabase.Callback() {
+                    override fun onOpen(db: SupportSQLiteDatabase) {
+                        super.onOpen(db)
+                        INSTANCE?.let { database ->
+                            CoroutineScope(Dispatchers.IO).launch {
+                                val dao = database.challengeDao()
+                                if (dao.getAllChallenges().isEmpty()) {
+                                    dao.insertChallenge(Challenge(description = "haz 10 de pecho"))
+                                    dao.insertChallenge(Challenge(description = "di un secreto"))
+                                    dao.insertChallenge(Challenge(description = "haz 15 sentadillas"))
+                                    dao.insertChallenge(Challenge(description = "haz 10 abdominales"))
+                                }
+                            }
+                        }
+                    }
+                })
                 .build()
                 INSTANCE = instance
                 instance
-            }
-        }
-
-        private class DatabaseCallback : RoomDatabase.Callback() {
-            override fun onCreate(db: SupportSQLiteDatabase) {
-                super.onCreate(db)
-                INSTANCE?.let { database ->
-                    CoroutineScope(Dispatchers.IO).launch {
-                        val dao = database.challengeDao()
-                        dao.insertChallenge(Challenge(description = "haz 10 de pecho"))
-                        dao.insertChallenge(Challenge(description = "di un secreto"))
-                        dao.insertChallenge(Challenge(description = "haz 15 sentadillas"))
-                        dao.insertChallenge(Challenge(description = "haz 10 abdominales"))
-                    }
-                }
             }
         }
     }
