@@ -15,4 +15,9 @@
     <string name="desc_trophy">Trofeo de ganador</string>
     <string name="title_rules">Reglas del Juego</string>
     <string name="desc_back">Volver al Home</string>
+    <string name="title_login">pico botella</string>
+    <string name="hint_email">Email</string>
+    <string name="hint_password">Password</string>
+    <string name="btn_login">Login</string>
+    <string name="text_register">Registrarse</string>
 </resources>
