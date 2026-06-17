@@ -20,6 +20,12 @@ class HomeViewModel(private val repository: ChallengeRepository) : ViewModel() {
     private val _isSpinning = MutableLiveData<Boolean>(false)
     val isSpinning: LiveData<Boolean> = _isSpinning
 
+    private val _isRotating = MutableLiveData<Boolean>(false)
+    val isRotating: LiveData<Boolean> = _isRotating
+
+    private val _isSoundOn = MutableLiveData<Boolean>(true)
+    val isSoundOn: LiveData<Boolean> = _isSoundOn
+
     private val _currentChallenge = MutableLiveData<String?>()
     val currentChallenge: LiveData<String?> = _currentChallenge
 
@@ -30,6 +36,7 @@ class HomeViewModel(private val repository: ChallengeRepository) : ViewModel() {
 
         viewModelScope.launch {
             _isSpinning.value = true
+            _isRotating.value = true
             _countdownValue.value = null
             _currentChallenge.value = null
 
@@ -40,6 +47,7 @@ class HomeViewModel(private val repository: ChallengeRepository) : ViewModel() {
             lastAngle = totalRotation % 360f
 
             delay(3000)
+            _isRotating.value = false
 
             for (i in 3 downTo 0) {
                 _countdownValue.value = i
@@ -56,5 +64,9 @@ class HomeViewModel(private val repository: ChallengeRepository) : ViewModel() {
     fun onDialogClosed() {
         _isSpinning.value = false
         _currentChallenge.value = null
+    }
+
+    fun toggleSound() {
+        _isSoundOn.value = !(_isSoundOn.value ?: true)
     }
 }
