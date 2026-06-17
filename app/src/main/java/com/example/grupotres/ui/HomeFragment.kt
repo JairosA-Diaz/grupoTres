@@ -193,6 +193,14 @@ class HomeFragment : Fragment() {
             }
         }
 
+        // Clic en el icono de Cerrar Sesión
+        view.findViewById<ImageView>(R.id.iv_logout).setOnClickListener {
+            it.playTouchAnimation {
+                // TODO: Implementar cierre de sesión y navegación al Login/Registro
+                // findNavController().navigate(R.id.action_homeFragment_to_loginFragment)
+            }
+        }
+
         viewModel.rotationAngle.observe(viewLifecycleOwner) { targetAngle ->
             // Observa el ángulo generado por el ViewModel para girar la botella
 
