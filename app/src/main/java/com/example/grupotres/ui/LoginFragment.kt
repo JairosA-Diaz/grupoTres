@@ -1,5 +1,6 @@
 package com.example.grupotres.ui
 
+import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -46,6 +47,13 @@ class LoginFragment : Fragment() {
         btnLogin.setOnClickListener {
             val password = etPassword.text.toString()
             if (password.length >= 6) {
+                // Criterio 1 HU 3.0: Guardar sesión
+                val sharedPref = requireActivity().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+                with(sharedPref.edit()) {
+                    putBoolean("is_logged_in", true)
+                    apply()
+                }
+
                 // Si cumple la validación, navegamos al Home
                 findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
             } else {
