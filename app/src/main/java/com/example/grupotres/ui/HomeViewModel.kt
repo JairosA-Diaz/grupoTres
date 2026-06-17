@@ -29,6 +29,9 @@ class HomeViewModel(private val repository: ChallengeRepository) : ViewModel() {
     private val _currentChallenge = MutableLiveData<String?>()
     val currentChallenge: LiveData<String?> = _currentChallenge
 
+    private val _pokemonImage = MutableLiveData<android.graphics.Bitmap?>()
+    val pokemonImage: LiveData<android.graphics.Bitmap?> = _pokemonImage
+
     private var lastAngle = 0f
 
     fun spinBottle() {
@@ -58,12 +61,33 @@ class HomeViewModel(private val repository: ChallengeRepository) : ViewModel() {
             
             val randomChallenge = repository.getRandomChallenge()
             _currentChallenge.value = randomChallenge?.description ?: "¡Baila por 30 segundos!"
+            
+            fetchRandomPokemon()
+        }
+    }
+
+    private fun fetchRandomPokemon() {
+        viewModelScope.launch(kotlinx.coroutines.Dispatchers.IO) {
+            try {
+                val json = java.net.URL("https://raw.githubusercontent.com/Biuni/PokemonGO-Pokedex/master/pokedex.json")
+                    .readText()
+                val array = org.json.JSONObject(json).getJSONArray("pokemon")
+                val randomPokemon = array.getJSONObject((0 until array.length()).random())
+                val imgUrl = randomPokemon.getString("img").replace("http://", "https://")
+                
+                val stream = java.net.URL(imgUrl).openStream()
+                val bitmap = android.graphics.BitmapFactory.decodeStream(stream)
+                _pokemonImage.postValue(bitmap)
+            } catch (e: Exception) {
+                android.util.Log.e("POKEMON_ERROR", "Error: ${e.message}")
+            }
         }
     }
 
     fun onDialogClosed() {
         _isSpinning.value = false
         _currentChallenge.value = null
+        _pokemonImage.value = null
     }
 
     fun toggleSound() {
