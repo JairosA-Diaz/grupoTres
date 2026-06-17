@@ -9,9 +9,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-@Database(entities = [Challenge::class], version = 1)
+@Database(entities = [Challenge::class, User::class], version = 2)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun challengeDao(): ChallengeDao
+    abstract fun userDao(): UserDao
 
     companion object {
         @Volatile
@@ -24,18 +25,23 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "app_database"
                 )
+                .fallbackToDestructiveMigration()
                 .addCallback(object : RoomDatabase.Callback() {
                     override fun onOpen(db: SupportSQLiteDatabase) {
                         super.onOpen(db)
                         INSTANCE?.let { database ->
                             CoroutineScope(Dispatchers.IO).launch {
-                                val dao = database.challengeDao()
-                                if (dao.getAllChallenges().isEmpty()) {
-                                    dao.insertChallenge(Challenge(description = "haz 10 de pecho"))
-                                    dao.insertChallenge(Challenge(description = "di un secreto"))
-                                    dao.insertChallenge(Challenge(description = "haz 15 sentadillas"))
-                                    dao.insertChallenge(Challenge(description = "haz 10 abdominales"))
+                                val challengeDao = database.challengeDao()
+                                if (challengeDao.getAllChallenges().isEmpty()) {
+                                    challengeDao.insertChallenge(Challenge(description = "haz 10 de pecho"))
+                                    challengeDao.insertChallenge(Challenge(description = "di un secreto"))
+                                    challengeDao.insertChallenge(Challenge(description = "haz 15 sentadillas"))
+                                    challengeDao.insertChallenge(Challenge(description = "haz 10 abdominales"))
                                 }
+                                
+                                val userDao = database.userDao()
+                                // Insert a default user for testing if needed
+                                userDao.insertUser(User("admin@gmail.com", "123456"))
                             }
                         }
                     }
