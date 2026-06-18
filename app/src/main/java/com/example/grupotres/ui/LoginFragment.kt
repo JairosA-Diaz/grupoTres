@@ -11,19 +11,21 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.grupotres.R
 import com.example.grupotres.data.AppDatabase
+import com.example.grupotres.repository.UserRepository
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
-import kotlinx.coroutines.launch
-
-import androidx.fragment.app.viewModels
 
 class LoginFragment : Fragment() {
 
-    private val viewModel: LoginViewModel by viewModels()
+    private val viewModel: LoginViewModel by viewModels {
+        val database = AppDatabase.getDatabase(requireContext())
+        val repository = UserRepository(database.userDao())
+        LoginViewModelFactory(repository)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -41,15 +43,12 @@ class LoginFragment : Fragment() {
         val btnLogin = view.findViewById<Button>(R.id.btn_login)
         val tvRegister = view.findViewById<View>(R.id.tv_register_link)
 
-        fun updateLoginButtonState() {
-            val email = etEmail.text.toString().trim()
-            val password = etPassword.text.toString().trim()
-            val isEnabled = email.isNotEmpty() && password.isNotEmpty()
-            
+        // Observar si el botón de login debe estar habilitado
+        viewModel.isLoginEnabled.observe(viewLifecycleOwner) { isEnabled ->
             btnLogin.isEnabled = isEnabled
             tvRegister.isEnabled = isEnabled
             
-            // Una vez se habilite el botón, el texto “Login” tendrá un estilo bold
+            // Criterio: Estilo bold cuando se habilita
             if (isEnabled) {
                 btnLogin.setTypeface(null, Typeface.BOLD)
             } else {
@@ -57,60 +56,54 @@ class LoginFragment : Fragment() {
             }
         }
 
-        // Inicializar el estado del botón
-        updateLoginButtonState()
+        // Observar errores de validación de password
+        viewModel.passwordError.observe(viewLifecycleOwner) { error ->
+            tilPassword.error = error
+        }
 
-        val commonTextWatcher = object : TextWatcher {
+        // Observar errores de login (credenciales incorrectas)
+        viewModel.loginErrorMessage.observe(viewLifecycleOwner) { message ->
+            if (message != null) {
+                Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+                viewModel.onErrorMessageShown()
+            }
+        }
+
+        // Observar éxito del login para navegar
+        viewModel.navigateToHome.observe(viewLifecycleOwner) { shouldNavigate ->
+            if (shouldNavigate) {
+                // Criterio 1 HU 3.0: Guardar sesión
+                val sharedPref = requireActivity().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+                with(sharedPref.edit()) {
+                    putBoolean("is_logged_in", true)
+                    apply()
+                }
+                
+                findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
+                viewModel.onNavigatedToHome()
+            }
+        }
+
+        // Listener común para ambos campos
+        val textWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                updateLoginButtonState()
+                viewModel.onFieldsChanged(
+                    etEmail.text.toString().trim(),
+                    etPassword.text.toString().trim()
+                )
             }
             override fun afterTextChanged(s: Editable?) {}
         }
 
-        etEmail.addTextChangedListener(commonTextWatcher)
-        
-        // Criterio 5: Validación en tiempo real del password + actualización de estado del botón
-        etPassword.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                updateLoginButtonState()
-                val password = s.toString()
-                if (password.isNotEmpty() && password.length < 6) {
-                    tilPassword.error = "Mínimo 6 dígitos"
-                } else {
-                    tilPassword.error = null
-                }
-            }
-            override fun afterTextChanged(s: Editable?) {}
-        })
+        etEmail.addTextChangedListener(textWatcher)
+        etPassword.addTextChangedListener(textWatcher)
 
         btnLogin.setOnClickListener {
-            val email = etEmail.text.toString().trim()
-            val password = etPassword.text.toString().trim()
-
-            if (password.length >= 6) {
-                lifecycleScope.launch {
-                    val db = AppDatabase.getDatabase(requireContext())
-                    val user = db.userDao().getUser(email, password)
-
-                    if (user != null) {
-                        // Criterio 1 HU 3.0: Guardar sesión
-                        val sharedPref = requireActivity().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
-                        with(sharedPref.edit()) {
-                            putBoolean("is_logged_in", true)
-                            apply()
-                        }
-                        // Si cumple la validación, navegamos al Home
-                        findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
-                    } else {
-                        // Login incorrecto
-                        Toast.makeText(requireContext(), "Login incorrecto", Toast.LENGTH_SHORT).show()
-                    }
-                }
-            } else {
-                tilPassword.error = "Mínimo 6 dígitos"
-            }
+            viewModel.onLoginClicked(
+                etEmail.text.toString().trim(),
+                etPassword.text.toString().trim()
+            )
         }
     }
 }
