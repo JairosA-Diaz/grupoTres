@@ -44,6 +44,9 @@ class HomeViewModel(private val repository: ChallengeRepository) : ViewModel() {
     val currentChallenge: LiveData<String?> = _currentChallenge
     // Almacena la descripción del reto seleccionado aleatoriamente
 
+    private val _pokemonImage = MutableLiveData<android.graphics.Bitmap?>()
+    val pokemonImage: LiveData<android.graphics.Bitmap?> = _pokemonImage
+
     private var lastAngle = 0f
     // Guarda el último ángulo para que la botella siempre empiece a girar desde donde quedó
 
@@ -91,7 +94,26 @@ class HomeViewModel(private val repository: ChallengeRepository) : ViewModel() {
             // Busca un reto al azar en la base de datos (HU 12)
             
             _currentChallenge.value = randomChallenge?.description ?: "¡Baila por 30 segundos!"
-            // Muestra el reto encontrado o uno por defecto si no hay ninguno
+            
+            fetchRandomPokemon()
+        }
+    }
+
+    private fun fetchRandomPokemon() {
+        viewModelScope.launch(kotlinx.coroutines.Dispatchers.IO) {
+            try {
+                val json = java.net.URL("https://raw.githubusercontent.com/Biuni/PokemonGO-Pokedex/master/pokedex.json")
+                    .readText()
+                val array = org.json.JSONObject(json).getJSONArray("pokemon")
+                val randomPokemon = array.getJSONObject((0 until array.length()).random())
+                val imgUrl = randomPokemon.getString("img").replace("http://", "https://")
+                
+                val stream = java.net.URL(imgUrl).openStream()
+                val bitmap = android.graphics.BitmapFactory.decodeStream(stream)
+                _pokemonImage.postValue(bitmap)
+            } catch (e: Exception) {
+                android.util.Log.e("POKEMON_ERROR", "Error: ${e.message}")
+            }
         }
     }
 
@@ -99,7 +121,7 @@ class HomeViewModel(private val repository: ChallengeRepository) : ViewModel() {
         // Se ejecuta cuando el jugador cierra el diálogo del reto
         _isSpinning.value = false
         _currentChallenge.value = null
-        // Libera el botón para una nueva partida (Criterio 8 HU 11)
+        _pokemonImage.value = null
     }
 
     fun toggleSound() {

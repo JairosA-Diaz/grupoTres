@@ -11,13 +11,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 // Importa las librerías de Room para la BD y Corrutinas para procesos en segundo plano
 
-@Database(entities = [Challenge::class], version = 1)
-// Define la base de datos, las tablas que incluye (Challenge) y su versión
+@Database(entities = [Challenge::class, User::class], version = 2)
 abstract class AppDatabase : RoomDatabase() {
     // Clase abstracta que sirve como punto de acceso principal a la base de datos SQLite
 
     abstract fun challengeDao(): ChallengeDao
-    // Define el DAO para que Room pueda generar la implementación de las consultas
+    abstract fun userDao(): UserDao
 
     companion object {
         @Volatile
@@ -32,6 +31,7 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "app_database"
                 )
+                .fallbackToDestructiveMigration()
                 .addCallback(object : RoomDatabase.Callback() {
                     // Callback que se ejecuta cuando la base de datos se abre
                     override fun onOpen(db: SupportSQLiteDatabase) {
@@ -39,14 +39,17 @@ abstract class AppDatabase : RoomDatabase() {
                         INSTANCE?.let { database ->
                             // Usa corrutinas para insertar datos iniciales sin bloquear la pantalla
                             CoroutineScope(Dispatchers.IO).launch {
-                                val dao = database.challengeDao()
-                                // Si la lista de retos está vacía, inserta unos por defecto (Pre-poblado)
-                                if (dao.getAllChallenges().isEmpty()) {
-                                    dao.insertChallenge(Challenge(description = "haz 10 de pecho"))
-                                    dao.insertChallenge(Challenge(description = "di un secreto"))
-                                    dao.insertChallenge(Challenge(description = "haz 15 sentadillas"))
-                                    dao.insertChallenge(Challenge(description = "haz 10 abdominales"))
+                                val challengeDao = database.challengeDao()
+                                if (challengeDao.getAllChallenges().isEmpty()) {
+                                    challengeDao.insertChallenge(Challenge(description = "haz 10 de pecho"))
+                                    challengeDao.insertChallenge(Challenge(description = "di un secreto"))
+                                    challengeDao.insertChallenge(Challenge(description = "haz 15 sentadillas"))
+                                    challengeDao.insertChallenge(Challenge(description = "haz 10 abdominales"))
                                 }
+                                
+                                val userDao = database.userDao()
+                                // Insert a default user for testing if needed
+                                userDao.insertUser(User("admin@gmail.com", "123456"))
                             }
                         }
                     }
