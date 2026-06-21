@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "496152427019",
+    "project_id": "loginfirebase-32578",
+    "storage_bucket": "loginfirebase-32578.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:496152427019:android:2964f07c62d22f71a9a50e",
+        "android_client_info": {
+          "package_name": "com.example.grupotres"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDcOTam8siBUbtzT9ypJJK89SzfvW5kSbQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
