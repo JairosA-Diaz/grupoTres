@@ -54,12 +54,11 @@ dependencies {
     implementation(libs.androidx.navigation.ui.ktx)
 
 
-    //Authentication
+    // Firebase
+    implementation(platform("com.google.firebase:firebase-bom:33.1.2"))
     implementation("com.google.firebase:firebase-auth-ktx")
-
-    //Firestore y FireBase
-    implementation(platform("com.google.firebase:firebase-bom:32.5.0"))
-    implementation("com.google.firebase:firebase-firestore")
+    implementation("com.google.firebase:firebase-firestore-ktx")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3")
 
     // Room
     implementation(libs.androidx.room.runtime)
