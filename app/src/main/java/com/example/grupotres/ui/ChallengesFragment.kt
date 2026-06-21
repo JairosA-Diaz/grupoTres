@@ -4,8 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.core.widget.doAfterTextChanged
@@ -15,7 +15,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.grupotres.R
-import com.example.grupotres.data.AppDatabase
 import com.example.grupotres.data.Challenge
 import com.example.grupotres.repository.ChallengeRepository
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -101,7 +100,6 @@ class ChallengesFragment : Fragment() {
         tvTitle.text = "Editar Reto"
         etDescription.setText(challenge.description)
         
-        // Inicializar estado del botón Guardar para edición
         btnSave.isEnabled = true
         btnSave.alpha = 1.0f
 
