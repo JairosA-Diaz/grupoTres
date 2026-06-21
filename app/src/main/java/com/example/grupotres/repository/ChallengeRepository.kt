@@ -1,27 +1,65 @@
 package com.example.grupotres.repository
 
 import com.example.grupotres.data.Challenge
-import com.example.grupotres.data.ChallengeDao
+import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.tasks.await
 
-class ChallengeRepository(private val challengeDao: ChallengeDao) {
+class ChallengeRepository {
+    private val db = FirebaseFirestore.getInstance()
+    private val challengesCollection = db.collection("challenges")
 
     suspend fun getAllChallenges(): List<Challenge> {
-        return challengeDao.getAllChallenges()
+        return try {
+            val snapshot = challengesCollection.get().await()
+            snapshot.documents.mapNotNull { doc ->
+                val challenge = doc.toObject(Challenge::class.java)
+                challenge?.copy(id = doc.id)
+            }
+        } catch (e: Exception) {
+            emptyList()
+        }
     }
 
     suspend fun insertChallenge(challenge: Challenge) {
-        challengeDao.insertChallenge(challenge)
+        try {
+            val data = hashMapOf(
+                "description" to challenge.description
+            )
+            challengesCollection.add(data).await()
+        } catch (e: Exception) {
+            // Manejar error
+        }
     }
 
     suspend fun updateChallenge(challenge: Challenge) {
-        challengeDao.updateChallenge(challenge)
+        try {
+            if (challenge.id.isNotEmpty()) {
+                val data = hashMapOf(
+                    "description" to challenge.description
+                )
+                challengesCollection.document(challenge.id).set(data).await()
+            }
+        } catch (e: Exception) {
+            // Manejar error
+        }
     }
 
     suspend fun deleteChallenge(challenge: Challenge) {
-        challengeDao.deleteChallenge(challenge)
+        try {
+            if (challenge.id.isNotEmpty()) {
+                challengesCollection.document(challenge.id).delete().await()
+            }
+        } catch (e: Exception) {
+            // Manejar error
+        }
     }
 
     suspend fun getRandomChallenge(): Challenge? {
-        return challengeDao.getRandomChallenge()
+        val all = getAllChallenges()
+        return if (all.isNotEmpty()) {
+            all.random()
+        } else {
+            null
+        }
     }
 }

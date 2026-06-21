@@ -23,9 +23,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 class ChallengesFragment : Fragment() {
 
     private val viewModel: ChallengesViewModel by viewModels {
-        val database = AppDatabase.getDatabase(requireContext())
-        val repository = ChallengeRepository(database.challengeDao())
-        ChallengesViewModelFactory(repository)
+        ChallengesViewModelFactory(ChallengeRepository())
     }
 
     override fun onCreateView(

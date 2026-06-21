@@ -70,16 +70,7 @@ class HomeFragment : Fragment() {
     // Define el Fragment principal del Home
 
     private val viewModel: HomeViewModel by viewModels {
-        // Crea y conecta el ViewModel del Home
-
-        val database = AppDatabase.getDatabase(requireContext())
-        // Obtiene la instancia de la base de datos usando el contexto actual
-
-        val repository = ChallengeRepository(database.challengeDao())
-        // Crea el repositorio usando el DAO de retos
-
-        HomeViewModelFactory(repository)
-        // Crea el ViewModel usando la fábrica personalizada
+        HomeViewModelFactory(ChallengeRepository())
     }
 
     private var currentAngle = 0f
