@@ -60,9 +60,6 @@ import androidx.navigation.fragment.findNavController
 import com.example.grupotres.R
 // Permite acceder a recursos como layouts, imágenes, animaciones y sonidos
 
-import com.example.grupotres.data.AppDatabase
-// Importa la base de datos local del proyecto
-
 import com.example.grupotres.repository.ChallengeRepository
 // Importa el repositorio encargado de manejar los retos
 
