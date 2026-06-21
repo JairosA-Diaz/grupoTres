@@ -2,6 +2,7 @@ package com.example.grupotres.repository
 
 import com.example.grupotres.data.Challenge
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.toObject
 import kotlinx.coroutines.tasks.await
 
 class ChallengeRepository {
