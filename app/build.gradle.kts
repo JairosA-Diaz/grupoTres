@@ -53,13 +53,11 @@ dependencies {
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
 
-    //FireBase
-    implementation(platform("com.google.firebase:firebase-bom:34.15.0"))
 
     //Authentication
     implementation("com.google.firebase:firebase-auth-ktx")
 
-    //Firestore
+    //Firestore y FireBase
     implementation(platform("com.google.firebase:firebase-bom:32.5.0"))
     implementation("com.google.firebase:firebase-firestore")
 

@@ -15,8 +15,8 @@ class LoginViewModel(private val repository: UserRepository) : ViewModel() {
     private val _isLoginEnabled = MutableLiveData<Boolean>(false)
     val isLoginEnabled: LiveData<Boolean> = _isLoginEnabled
 
-    private val _loginErrorMessage = MutableLiveData<String?>()
-    val loginErrorMessage: LiveData<String?> = _loginErrorMessage
+    private val _authErrorMessage = MutableLiveData<String?>()
+    val authErrorMessage: LiveData<String?> = _authErrorMessage
 
     private val _navigateToHome = MutableLiveData<Boolean>()
     val navigateToHome: LiveData<Boolean> = _navigateToHome
@@ -35,15 +35,26 @@ class LoginViewModel(private val repository: UserRepository) : ViewModel() {
     fun onLoginClicked(email: String, password: String) {
         if (password.length >= 6) {
             viewModelScope.launch {
-                val user = repository.getUser(email, password)
+                val user = repository.login(email, password)
                 if (user != null) {
                     _navigateToHome.value = true
                 } else {
-                    _loginErrorMessage.value = "Login incorrecto"
+                    _authErrorMessage.value = "Login incorrecto"
                 }
             }
-        } else {
-            _passwordError.value = "Mínimo 6 dígitos"
+        }
+    }
+
+    fun onRegisterClicked(email: String, password: String) {
+        if (password.length >= 6) {
+            viewModelScope.launch {
+                val user = repository.register(email, password)
+                if (user != null) {
+                    _navigateToHome.value = true
+                } else {
+                    _authErrorMessage.value = "Error en el registro"
+                }
+            }
         }
     }
 
@@ -52,6 +63,6 @@ class LoginViewModel(private val repository: UserRepository) : ViewModel() {
     }
 
     fun onErrorMessageShown() {
-        _loginErrorMessage.value = null
+        _authErrorMessage.value = null
     }
 }
