@@ -5,9 +5,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.grupotres.repository.UserRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class LoginViewModel(private val repository: UserRepository) : ViewModel() {
+@HiltViewModel
+class LoginViewModel @Inject constructor(private val repository: UserRepository) : ViewModel() {
 
     private val _passwordError = MutableLiveData<String?>()
     val passwordError: LiveData<String?> = _passwordError
