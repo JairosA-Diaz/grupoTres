@@ -5,19 +5,15 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-// Importa las herramientas necesarias para manejar el ciclo de vida y datos observables
-
 import com.example.grupotres.repository.ChallengeRepository
-// Importa el repositorio para acceder a los retos de la base de datos
-
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-// Importa herramientas para manejar procesos en segundo plano (corrutinas) y retardos
-
+import javax.inject.Inject
 import kotlin.random.Random
-// Importa la herramienta para generar números aleatorios
 
-class HomeViewModel(private val repository: ChallengeRepository) : ViewModel() {
+@HiltViewModel
+class HomeViewModel @Inject constructor(private val repository: ChallengeRepository) : ViewModel() {
     // Clase ViewModel encargada de la lógica de negocio de la pantalla principal
 
     private val _rotationAngle = MutableLiveData<Float>()

@@ -18,13 +18,12 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.grupotres.R
-import com.example.grupotres.repository.ChallengeRepository
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class HomeFragment : Fragment() {
 
-    private val viewModel: HomeViewModel by viewModels {
-        HomeViewModelFactory(ChallengeRepository())
-    }
+    private val viewModel: HomeViewModel by viewModels()
 
     private var currentAngle = 0f
     private var mediaPlayer: MediaPlayer? = null
