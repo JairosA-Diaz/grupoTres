@@ -6,9 +6,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.grupotres.data.Challenge
 import com.example.grupotres.repository.ChallengeRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class ChallengesViewModel(private val repository: ChallengeRepository) : ViewModel() {
+@HiltViewModel
+class ChallengesViewModel @Inject constructor(private val repository: ChallengeRepository) : ViewModel() {
 
     private val _allChallenges = MutableLiveData<List<Challenge>>()
     val allChallenges: LiveData<List<Challenge>> = _allChallenges

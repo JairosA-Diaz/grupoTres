@@ -16,14 +16,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.grupotres.R
 import com.example.grupotres.data.Challenge
-import com.example.grupotres.repository.ChallengeRepository
+import dagger.hilt.android.AndroidEntryPoint
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
+@AndroidEntryPoint
 class ChallengesFragment : Fragment() {
 
-    private val viewModel: ChallengesViewModel by viewModels {
-        ChallengesViewModelFactory(ChallengeRepository())
-    }
+    private val viewModel: ChallengesViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
