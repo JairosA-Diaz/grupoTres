@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.grupotres.repository.ChallengeRepository
+import com.example.grupotres.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -13,7 +14,10 @@ import javax.inject.Inject
 import kotlin.random.Random
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(private val repository: ChallengeRepository) : ViewModel() {
+class HomeViewModel @Inject constructor(
+    private val repository: ChallengeRepository,
+    private val userRepository: UserRepository
+) : ViewModel() {
     // Clase ViewModel encargada de la lógica de negocio de la pantalla principal
 
     private val _rotationAngle = MutableLiveData<Float>()
@@ -123,5 +127,9 @@ class HomeViewModel @Inject constructor(private val repository: ChallengeReposit
     fun toggleSound() {
         // Cambia el estado del sonido entre encendido y apagado (Criterio 3 HU 3.0)
         _isSoundOn.value = !(_isSoundOn.value ?: true)
+    }
+
+    fun logout() {
+        userRepository.logout()
     }
 }
