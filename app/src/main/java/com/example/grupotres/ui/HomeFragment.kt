@@ -1,5 +1,6 @@
 package com.example.grupotres.ui
 
+import android.content.Context
 import android.content.Intent
 import android.media.MediaPlayer
 import android.net.Uri
@@ -102,6 +103,12 @@ class HomeFragment : Fragment() {
 
         view.findViewById<ImageView>(R.id.iv_logout).setOnClickListener {
             it.playTouchAnimation {
+                viewModel.logout()
+                val sharedPref = requireActivity().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+                with(sharedPref.edit()) {
+                    putBoolean("is_logged_in", false)
+                    apply()
+                }
                 findNavController().navigate(R.id.action_homeFragment_to_loginFragment)
             }
         }
